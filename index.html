@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090b12">
+<title>mostminigames — Play. Compete. Repeat.</title>
+<style>
+:root{--bg:#090b12;--panel:#121622;--text:#f5f7ff;--muted:#9ba5ba;--blue:#8ea5ff;--cyan:#75e3df;--line:#293247}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 50% -20%,#27345c,transparent 48%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+button,input{font:inherit}
+button{cursor:pointer;color:inherit}
+.hidden{display:none!important}
+header{position:sticky;top:0;z-index:10;background:#090b12dd;border-bottom:1px solid #ffffff12;backdrop-filter:blur(20px)}
+.nav{max-width:1100px;margin:auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:800;font-size:19px}
+.brand span{color:var(--blue)}
+.navlinks{display:flex;gap:8px}
+.navlinks button,.secondary,.back{border:1px solid #ffffff1c;background:#ffffff0d;color:var(--muted);padding:10px 13px;border-radius:12px}
+.navlinks button.active{color:white;background:#ffffff18}
+.pill{background:linear-gradient(135deg,#91a8ff,#7b83ec);color:#101525;border:0;border-radius:13px;padding:10px 15px;font-weight:750}
+main{max-width:1100px;margin:auto;padding:32px 20px 70px}
+.hero{text-align:center;padding:50px 0 35px}
+.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:2px;font-weight:800}
+.hero h1{font-size:clamp(42px,8vw,76px);letter-spacing:-4px;line-height:.98;margin:17px 0}
+.gradient{background:linear-gradient(100deg,#fff,#a9baff 55%,#7de4dc);background-clip:text;color:transparent}
+.hero p{color:var(--muted);font-size:17px;max-width:530px;margin:0 auto 24px;line-height:1.6}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0 38px}
+.stat,.card,.gamebox,.profilebox{background:linear-gradient(145deg,#171d2b,#101521);border:1px solid var(--line);border-radius:22px;padding:19px}
+.stat strong{display:block;font-size:25px}
+.stat span,.muted{color:var(--muted)}
+.stat span{font-size:12px}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;margin:34px 0 15px}
+.sectionhead h2{margin:0;font-size:25px}
+.sectionhead p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.games{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{padding:0;overflow:hidden;transition:transform .2s}
+.card:hover{transform:translateY(-5px)}
+.game-art{height:145px;display:grid;place-items:center;font-size:58px;background:linear-gradient(135deg,#222d4a,#151a29)}
+.cardbody{padding:17px}
+.cardbody h3{margin:0 0 6px}
+.cardbody p{color:var(--muted);font-size:13px;min-height:35px}
+.playbtn{width:100%;background:#e7ecff;color:#11182b;border:0;padding:11px;border-radius:12px;font-weight:800}
+.gameview{margin-top:25px;scroll-margin-top:90px}
+.gamebox{padding:22px}
+.gamebar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.gamebar h2{margin:0}
+.game-status{color:var(--cyan);font-weight:700;text-align:center;min-height:25px;margin:12px 0}
+.ttt{display:grid;grid-template-columns:repeat(3,minmax(70px,100px));gap:8px;justify-content:center}
+.ttt button{aspect-ratio:1;background:#20283a;border:1px solid #35415b;border-radius:16px;font-size:36px;color:#aabaff}
+.memory{display:grid;grid-template-columns:repeat(4,minmax(52px,80px));gap:8px;justify-content:center}
+.memory button{aspect-ratio:1;border:1px solid #35415b;background:#20283a;border-radius:14px;font-size:27px}
+.memory button.revealed{background:#34435e}
+.clickarea{display:grid;place-items:center;min-height:190px}
+.target{width:135px;height:135px;border-radius:50%;border:0;background:linear-gradient(145deg,#a7baff,#687fe9);color:#10182b;font-weight:900}
+.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:14px}
+.controls button{background:#252e42;border:1px solid #3b4862;border-radius:11px;padding:10px 14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.profilebox h3{margin:0 0 12px}
+.leaderrow{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #ffffff10;font-size:14px}
+footer{text-align:center;color:#69748b;padding:28px 10px;font-size:12px}
+.modal{position:fixed;inset:0;background:#000b;z-index:30;display:grid;place-items:center;padding:20px}
+.modalbox{width:min(390px,100%);background:#151b29;border:1px solid #3b4862;border-radius:22px;padding:24px}
+.modalbox input{width:100%;background:#0d1220;border:1px solid #39445b;border-radius:12px;padding:13px;color:white;margin:7px 0 14px}
+.modalactions{display:flex;gap:9px}
+.modalactions button{flex:1}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#e7ecff;color:#11182b;padding:11px 17px;border-radius:12px;font-weight:700;z-index:40}
+@media(max-width:720px){
+.nav{padding:11px 14px}.navlinks{gap:2px}.navlinks button{padding:8px;font-size:12px}
+.games{grid-template-columns:1fr}.card{display:grid;grid-template-columns:115px 1fr}
+.game-art{height:100%;min-height:150px;font-size:45px}
+.cardbody p{min-height:0}.stats{gap:8px}.stat{padding:13px}
+.stat strong{font-size:20px}.hero{padding:42px 0 25px}
+.hero h1{letter-spacing:-2px}.two{grid-template-columns:1fr}
+main{padding:22px 14px 55px}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="nav">
+<div class="brand">most<span>mini</span>games</div>
+<nav class="navlinks">
+<button class="active" data-go="home">Home</button>
+<button data-go="games">Games</button>
+<button data-go="dashboard">Dashboard</button>
+</nav>
+<button class="pill" id="accountBtn">Sign in</button>
+</div>
+</header>
+
+<main>
+<section id="home">
+<div class="hero">
+<div class="eyebrow">YOUR NEXT HIGH SCORE STARTS HERE</div>
+<h1><span class="gradient">Play more.</span><br>Have fun.</h1>
+<p>A little arcade packed with quick games, personal bests and friendly competition. Pick a game and jump right in.</p>
+<div class="actions">
+<button class="pill" data-go="games">Explore games →</button>
+<button class="secondary" id="soundToggle">♪ Sound: On</button>
+</div>
+</div>
+<div class="stats">
+<div class="stat"><strong id="statPlayed">0</strong><span>GAMES PLAYED</span></div>
+<div class="stat"><strong id="statPoints">0</strong><span>POINTS EARNED</span></div>
+<div class="stat"><strong id="statBest">—</strong><span>TOP SCORE</span></div>
+</div>
+</section>
+
+<section id="games">
+<div class="sectionhead">
+<div><h2>Choose your game</h2><p>Three ways to beat your best.</p></div>
+<span class="muted">03 GAMES</span>
+</div>
+<div class="games">
+<article class="card"><div class="game-art">⭕</div><div class="cardbody"><h3>Tic-Tac-Toe</h3><p>The classic. Can you get three in a row?</p><button class="playbtn" data-game="ttt">Play now</button></div></article>
+<article class="card"><div class="game-art">🧠</div><div class="cardbody"><h3>Memory Match</h3><p>Flip the cards and find all six pairs.</p><button class="playbtn" data-game="memory">Play now</button></div></article>
+<article class="card"><div class="game-art">⚡</div><div class="cardbody"><h3>Click Rush</h3><p>How many targets can you hit in 15 seconds?</p><button class="playbtn" data-game="rush">Play now</button></div></article>
+</div>
+</section>
+
+<section id="gameView" class="gameview hidden">
+<div class="gamebox">
+<div class="gamebar"><h2 id="gameTitle">Game</h2><button class="back" id="backGames">← All games</button></div>
+<div id="gameContent"></div>
+<div class="game-status" id="gameStatus"></div>
+<div class="controls" id="gameControls"></div>
+</div>
+</section>
+
+<section id="dashboard">
+<div class="sectionhead"><div><h2>Your dashboard</h2><p>Your arcade progress, all in one place.</p></div></div>
+<div class="two">
+<div class="profilebox">
+<h3>Player profile</h3>
+<div id="profileName" style="font-size:22px;font-weight:800">Guest player</div>
+<p class="muted" id="profileHint">Sign in to add a player name on this device.</p>
+<button class="secondary" id="profileAction">Set player name</button>
+</div>
+<div class="profilebox">
+<h3>Personal records</h3>
+<div class="leaderrow"><span>Tic-Tac-Toe wins</span><b id="wins">0</b></div>
+<div class="leaderrow"><span>Memory best moves</span><b id="memoryBest">—</b></div>
+<div class="leaderrow"><span>Click Rush best</span><b id="rushBest">0</b></div>
+</div>
+</div>
+</section>
+<footer>© 2025 mostminigames · Made for fun.</footer>
+</main>
+
+<div class="modal hidden" id="loginModal">
+<div class="modalbox">
+<h2>Welcome, player.</h2>
+<p class="muted">Choose a display name for this device. No password or account is required.</p>
+<label for="playerInput">Player name</label>
+<input id="playerInput" maxlength="20" placeholder="e.g. ArcadePro">
+<div class="modalactions">
+<button class="secondary" id="cancelLogin">Cancel</button>
+<button class="pill" id="saveLogin">Continue</button>
+</div>
+</div>
+</div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const defaults={name:"",played:0,points:0,tttWins:0,memoryBest:0,rushBest:0,topScore:0};
+let data;
+try{data={...defaults,...JSON.parse(localStorage.getItem("mmg-data")||"{}")}}catch{data={...defaults}}
+let soundOn=true,audioCtx=null,currentGame="",tttBoard=[],tttTurn="X",tttOver=false;
+let memoryDeck=[],memoryOpen=[],memoryMatched=[],memoryMoves=0,memoryLock=false;
+let rushInterval=null,rushTime=15,rushScore=0,rushRunning=false;
+
+const save=()=>{try{localStorage.setItem("mmg-data",JSON.stringify(data))}catch{}renderStats()};
+function renderStats(){
+$("statPlayed").textContent=data.played;
+$("statPoints").textContent=data.points;
+$("statBest").textContent=data.topScore||"—";
+$("profileName").textContent=data.name||"Guest player";
+$("profileHint").textContent=data.name?"Player profile saved on this device.":"Sign in to add a player name on this device.";
+$("accountBtn").textContent=data.name?"Hi, "+data.name:"Sign in";
+$("profileAction").textContent=data.name?"Change player name":"Set player name";
+$("wins").textContent=data.tttWins;
+$("memoryBest").textContent=data.memoryBest||"—";
+$("rushBest").textContent=data.rushBest;
+}
+function beep(freq=440,duration=.08){
+if(!soundOn)return;
+try{
+audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+o.frequency.value=freq;g.gain.setValueAtTime(.07,audioCtx.currentTime);
+g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);
+o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration);
+}catch{}
+}
+function toast(msg){
+$("toast").textContent=msg;
+$("toast").classList.remove("hidden");
+setTimeout(()=>$("toast").classList.add("hidden"),1800);
+}
+function go(id){
+document.querySelectorAll(".navlinks button").forEach(b=>b.classList.toggle("active",b.dataset.go===id));
+$(id).scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+
+function controls(items){
+$("gameControls").innerHTML="";
+items.forEach(([label,fn])=>{
+const b=document.createElement("button");
+b.textContent=label;b.onclick=fn;$("gameControls").append(b);
+});
+}
+function finish(points){
+data.played++;data.points+=points;
+data.topScore=Math.max(data.topScore,points);save();
+}
+function showGame(name){
+stopRush();currentGame=name;
+$("gameView").classList.remove("hidden");
+$("gameView").scrollIntoView({behavior:"smooth",block:"start"});
+$("gameControls").innerHTML="";
+if(name==="ttt")initTtt();
+if(name==="memory")initMemory();
+if(name==="rush")initRush();
+}
+document.querySelectorAll("[data-game]").forEach(b=>b.addEventListener("click",()=>showGame(b.dataset.game)));
+$("backGames").onclick=()=>{$("gameView").classList.add("hidden");stopRush();go("games")};
+
+function winner(board){
+for(const [a,b,c] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]])
+if(board[a]&&board[a]===board[b]&&board[a]===board[c])return board[a];
+return board.every(Boolean)?"draw":null;
+}
+function initTtt(){
+$("gameTitle").textContent="Tic-Tac-Toe";
+tttBoard=Array(9).fill("");tttTurn="X";tttOver=false;
+$("gameContent").innerHTML='<div class="ttt" id="tttGrid"></div>';
+$("gameStatus").textContent="Your turn — X";
+controls([["New round",initTtt]]);
+drawTtt();
+}
+function drawTtt(){
+const grid=$("tttGrid");grid.innerHTML="";
+tttBoard.forEach((v,i)=>{
+const b=document.createElement("button");
+b.textContent=v;b.disabled=!!v||tttOver;
+b.onclick=()=>tttMove(i);grid.append(b);
+});
+}
+function endTtt(result){
+tttOver=true;drawTtt();
+if(result==="X"){
+$("gameStatus").textContent="You win! 🏆";
+data.tttWins++;finish(10);beep(760,.18);
+}else if(result==="draw"){
+$("gameStatus").textContent="It's a draw!";
+finish(2);
+}else{
+$("gameStatus").textContent="Computer wins. Try again!";
+finish(0);
+}
+}
+function tttMove(i){
+if(tttOver||tttBoard[i])return;
+tttBoard[i]="X";beep(520);
+let result=winner(tttBoard);
+if(result){endTtt(result);return}
+const free=tttBoard.map((v,i)=>v?null:i).filter(v=>v!==null);
+if(free.length){
+const pick=free[Math.floor(Math.random()*free.length)];
+tttBoard[pick]="O";
+}
+result=winner(tttBoard);
+if(result)endTtt(result);
+else $("gameStatus").textContent="Your turn — X";
+drawTtt();
+}
+
+function initMemory(){
+$("gameTitle").textContent="Memory Match";
+memoryDeck=["🍓","🚀","🐸","🎧","🌈","🍕","🍓","🚀","🐸","🎧","🌈","🍕"].sort(()=>Math.random()-.5);
+memoryOpen=[];memoryMatched=[];memoryMoves=0;memoryLock=false;
+$("gameContent").innerHTML='<div class="muted" style="text-align:center;margin-bottom:12px">Moves: <b id="moves">0</b> · Find all 6 pairs</div><div class="memory" id="memoryGrid"></div>';
+$("gameStatus").textContent="Find the matching pairs.";
+controls([["New game",initMemory]]);
+drawMemory();
+}
+function drawMemory(){
+const grid=$("memoryGrid");grid.innerHTML="";
+memoryDeck.forEach((v,i)=>{
+const b=document.createElement("button");
+const shown=memoryOpen.includes(i)||memoryMatched.includes(i);
+b.textContent=shown?v:"?";b.classList.toggle("revealed",shown);
+b.disabled=shown||memoryLock;
+b.onclick=()=>flipMemory(i);grid.append(b);
+});
+$("moves").textContent=memoryMoves;
+}
+function flipMemory(i){
+if(memoryLock||memoryOpen.includes(i)||memoryMatched.includes(i))return;
+memoryOpen.push(i);beep(440);drawMemory();
+if(memoryOpen.length===2){
+memoryMoves++;$("moves").textContent=memoryMoves;
+const [a,b]=memoryOpen;
+if(memoryDeck[a]===memoryDeck[b]){
+memoryMatched.push(a,b);memoryOpen=[];beep(680);drawMemory();
+if(memoryMatched.length===memoryDeck.length){
+$("gameStatus").textContent="All pairs found! 🎉";
+const pts=Math.max(5,50-memoryMoves);finish(pts);
+if(!data.memoryBest||memoryMoves<data.memoryBest){data.memoryBest=memoryMoves;save()}
+}
+}else{
+memoryLock=true;
+setTimeout(()=>{memoryOpen=[];memoryLock=false;drawMemory()},750);
+}
+}
+}
+
+function initRush(){
+$("gameTitle").textContent="Click Rush";
+rushScore=0;rushTime=15;rushRunning=false;
+$("gameContent").innerHTML='<div style="text-align:center"><div style="font-size:38px;font-weight:850" id="rushTime">15</div><div class="muted">SECONDS LEFT</div><div class="clickarea"><button class="target" id="targetBtn">START</button></div><div style="font-size:18px">Score: <b id="rushScore">0</b></div></div>';
+$("gameStatus").textContent="Hit the target as many times as you can.";
+controls([["Restart",initRush]]);
+$("targetBtn").onclick=()=>{
+if(!rushRunning){startRush();return}
+rushScore++;$("rushScore").textContent=rushScore;beep(500);
+};
+}
+function startRush(){
+rushRunning=true;$("targetBtn").textContent="TAP!";
+rushInterval=setInterval(()=>{
+rushTime--;$("rushTime").textContent=rushTime;
+if(rushTime<=0)endRush();
+},1000);
+}
+function stopRush(){
+if(rushInterval)clearInterval(rushInterval);
+rushInterval=null;rushRunning=false;
+}
+function endRush(){
+stopRush();$("targetBtn").disabled=true;
+$("targetBtn").textContent="DONE";
+$("gameStatus").textContent="Time! You scored "+rushScore+" points.";
+finish(rushScore);
+if(rushScore>data.rushBest){data.rushBest=rushScore;save()}
+beep(250,.2);
+}
+
+$("soundToggle").onclick=()=>{
+soundOn=!soundOn;
+$("soundToggle").textContent="♪ Sound: "+(soundOn?"On":"Off");
+if(soundOn)beep();
+};
+function openLogin(){
+$("playerInput").value=data.name||"";
+$("loginModal").classList.remove("hidden");
+}
+$("accountBtn").onclick=openLogin;
+$("profileAction").onclick=openLogin;
+$("cancelLogin").onclick=()=>$("loginModal").classList.add("hidden");
+$("saveLogin").onclick=()=>{
+const name=$("playerInput").value.trim();
+if(!name){toast("Please enter a player name.");return}
+data.name=name;save();
+$("loginModal").classList.add("hidden");
+toast("Welcome, "+name+"!");beep(660);
+};
+$("loginModal").onclick=e=>{
+if(e.target===$("loginModal"))$("loginModal").classList.add("hidden");
+};
+renderStats();
+})();
+</script>
+</body>
+</html>
